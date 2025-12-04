@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aurora • Five-Star Restaurant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1724; --card:#ffffff; --muted:#9aa4b2; --accent:#c49b63; --glass: rgba(255,255,255,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;background:linear-gradient(180deg,#071025 0%, #091524 40%, #071018 100%);color:#eef2f6}
+    a{color:inherit;text-decoration:none}
+
+    /* Layout */
+    .wrapper{display:grid;grid-template-columns:320px 1fr;min-height:100vh}
+    @media (max-width:900px){.wrapper{grid-template-columns:1fr} .side{position:fixed;left:0;right:auto;bottom:0;top:auto;height:72px;width:100%;display:flex;overflow:auto;z-index:40}}
+
+    /* Side scroller / nav */
+    .side{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));padding:28px 22px;border-right:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(6px)}
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#6b8bdf);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display';font-weight:700;color:#08202b}
+    .brand h1{font-family:'Playfair Display';font-size:18px;margin:0}
+    .brand p{margin:0;font-size:12px;color:var(--muted)}
+
+    nav{margin-top:22px}
+    .nav-list{display:flex;flex-direction:column;gap:12px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;color:#e6eef6}
+    .nav-item:hover{background:rgba(255,255,255,0.02);cursor:pointer}
+    .nav-item .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px rgba(196,155,99,0.22)}
+
+    /* Main content */
+    main{padding:48px 64px;overflow:auto}
+    .hero{display:grid;grid-template-columns:1fr 460px;gap:28px;align-items:center}
+    @media (max-width:1100px){.hero{grid-template-columns:1fr}}
+
+    .hero-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:32px;border-radius:18px;box-shadow:0 8px 30px rgba(4,8,15,0.6)}
+    .eyebrow{font-size:13px;color:var(--accent);font-weight:600;letter-spacing:1px}
+    .headline{font-family:'Playfair Display';font-size:36px;margin:8px 0 10px}
+    .lead{color:var(--muted);line-height:1.5}
+    .ctas{margin-top:18px;display:flex;gap:12px}
+    .btn{padding:12px 16px;border-radius:10px;font-weight:600;border:0;cursor:pointer}
+    .btn-primary{background:var(--accent);color:#08131a}
+    .btn-secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#e8eef6}
+
+    /* Side scroller gallery */
+    .gallery{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));padding:18px;border-radius:16px;height:420px;display:flex;flex-direction:column;gap:12px;align-items:stretch}
+    .gallery .slide{flex:1;border-radius:12px;background-size:cover;background-position:center;box-shadow:0 6px 18px rgba(2,6,12,0.6)}
+    .gallery .meta{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+
+    /* Sections */
+    section{margin-top:26px}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    @media (max-width:1100px){.cards{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:700px){.cards{grid-template-columns:1fr}}
+
+    .card{background:var(--glass);padding:18px;border-radius:12px}
+    .card h3{margin:0 0 8px}
+    .muted{color:var(--muted)}
+
+    /* Chef list */
+    .team{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media (max-width:900px){.team{grid-template-columns:1fr}}
+    .chef{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;display:flex;gap:12px;align-items:center}
+    .chef .avatar{width:84px;height:84px;border-radius:12px;background:#081426;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display';font-size:20px;color:var(--accent)}
+    .chef .bio{flex:1}
+    .chef .bio h4{margin:0 0 4px}
+    .chef .bio p{margin:0;color:var(--muted);font-size:14px}
+
+    /* Menu */
+    .menu{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .menu .menu-section{background:rgba(255,255,255,0.02);padding:16px;border-radius:12px}
+    .dish{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,0.03)}
+    .dish:last-child{border-bottom:0}
+    .price{font-weight:700}
+
+    /* Reservation/contact */
+    .contact-grid{display:grid;grid-template-columns:1fr 340px;gap:18px}
+    @media (max-width:1000px){.contact-grid{grid-template-columns:1fr}}
+    .contact-card{background:rgba(255,255,255,0.02);padding:18px;border-radius:12px}
+    label{display:block;font-size:13px;margin-bottom:6px}
+    input,textarea,select{width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:inherit}
+
+    footer{margin-top:28px;padding:20px 0;border-top:1px solid rgba(255,255,255,0.02);color:var(--muted)}
+
+    /* small helpers */
+    .flex{display:flex;gap:12px;align-items:center}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-size:13px}
+
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <aside class="side">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div>
+          <h1>Aurora</h1>
+          <p>Five-Star Dining • Fine Wines</p>
+        </div>
+      </div>
+
+      <nav aria-label="Main navigation">
+        <div class="nav-list">
+          <div class="nav-item" data-target="hero"><div class="dot"></div><div>Home</div></div>
+          <div class="nav-item" data-target="our-story"><div class="dot"></div><div>Our Story</div></div>
+          <div class="nav-item" data-target="chefs"><div class="dot"></div><div>Chef & Team</div></div>
+          <div class="nav-item" data-target="menu"><div class="dot"></div><div>Menu</div></div>
+          <div class="nav-item" data-target="private-dining"><div class="dot"></div><div>Private Dining</div></div>
+          <div class="nav-item" data-target="reservations"><div class="dot"></div><div>Reservations</div></div>
+          <div class="nav-item" data-target="contact"><div class="dot"></div><div>Contact</div></div>
+        </div>
+      </nav>
+
+      <div style="margin-top:22px;">
+        <div class="pill">Open Tue–Sun • 12:00–23:00</div>
+        <div style="height:12px"></div>
+        <div class="muted" style="font-size:13px">Located in: 88 Aurora Lane, City Center</div>
+      </div>
+
+      <div style="margin-top:20px;font-size:13px;color:var(--muted)">
+        <strong>Follow</strong>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <div class="pill">Instagram</div>
+          <div class="pill">Facebook</div>
+        </div>
+      </div>
+
+    </aside>
+
+    <main>
+      <section id="hero" class="hero">
+        <div class="hero-card">
+          <div class="eyebrow">Michelin-calibre • Seasonal Cuisine</div>
+          <h2 class="headline">Aurora — Where every plate tells a story</h2>
+          <p class="lead">An intimate fine dining experience blending modern techniques with the heart of classic cuisines. Seasonal ingredients, handcrafted desserts and a wine cellar curated by our sommelier.</p>
+
+          <div class="ctas">
+            <button class="btn btn-primary" onclick="scrollToSection('reservations')">Reserve a Table</button>
+            <button class="btn btn-secondary" onclick="scrollToSection('menu')">View Menu</button>
+          </div>
+
+          <div style="margin-top:18px;display:flex;gap:12px;align-items:center">
+            <div class="flex"><strong>Chef's Tasting</strong><span class="muted">• 7 courses</span></div>
+            <div class="muted">Seasonal menu changes monthly</div>
+          </div>
+
+          <div style="margin-top:20px;display:flex;gap:10px;align-items:center">
+            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'><rect width='48' height='48' fill='%23c49b63' rx='10'/><text x='50%' y='55%' font-family='Inter' font-size='22' fill='%23081213' text-anchor='middle' dominant-baseline='middle'>★</text></svg>" alt="award" style="width:56px;height:56px;border-radius:10px"/>
+            <div>
+              <div style="font-weight:700">Awarded Best New Fine Dining 2024</div>
+              <div class="muted">Critically acclaimed tasting menu.</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="gallery">
+          <div class="slide" id="slide-1" style="background-image:url('https://images.unsplash.com/photo-1541544180161-4f9f3b3e3f6f?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder');"></div>
+          <div class="meta"><div>Seasonal Harvest Salad</div><div class="muted">Chef's selection</div></div>
+        </aside>
+      </section>
+
+      <section id="our-story">
+        <div class="cards">
+          <div class="card">
+            <h3>Our Philosophy</h3>
+            <p class="muted">We celebrate the rhythm of the seasons. Every menu is crafted from sustainably-sourced produce and ethically raised proteins, prepared with techniques that honor flavor clarity and texture.</p>
+          </div>
+          <div class="card">
+            <h3>Wine & Cellar</h3>
+            <p class="muted">A rotating cellar of 400+ bottles. Our sommelier pairs wines by terroir and texture to complement each course — old world and thoughtful new world selections.</p>
+          </div>
+          <div class="card">
+            <h3>Private Dining</h3>
+            <p class="muted">Two private rooms: The Observatory (up to 16 guests) and The Hearth (up to 8 guests). Custom tasting experiences available for celebrations and corporate events.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="chefs">
+        <h2>Chef & Team</h2>
+        <p class="muted">Our kitchen is led by a team of internationally trained chefs and hospitality professionals.</p>
+
+        <div class="team" style="margin-top:14px">
+          <div class="chef">
+            <div class="avatar">ML</div>
+            <div class="bio">
+              <h4>Marcel Laurent — Executive Chef</h4>
+              <p class="muted">A protege of Parisian ateliers and a passion for fire-based technique. Marcel leads menu development and kitchen philosophy.</p>
+              <div class="muted" style="margin-top:8px">Specialties: Modern French, Charcoal-grilled proteins</div>
+            </div>
+          </div>
+
+          <div class="chef">
+            <div class="avatar">AR</div>
+            <div class="bio">
+              <h4>Aisha Rahman — Head Pastry Chef</h4>
+              <p class="muted">Delicate patisserie and modern dessert composition. Aisha designs plated desserts and pastry service.</p>
+              <div class="muted" style="margin-top:8px">Specialties: Plated desserts, contemporary patisserie</div>
+            </div>
+          </div>
+
+          <div class="chef">
+            <div class="avatar">SO</div>
+            <div class="bio">
+              <h4>Santiago Ortega — Sous Chef</h4>
+              <p class="muted">Execution and seasonal produce programs. Santiago manages the garde manger and coordinates with local farms.</p>
+              <div class="muted" style="margin-top:8px">Specialties: Vegetable-forward cuisine, fermentation</div>
+            </div>
+          </div>
+
+          <div class="chef">
+            <div class="avatar">VR</div>
+            <div class="bio">
+              <h4>Vera Rossi — Sommelier</h4>
+              <p class="muted">Curates the cellar and designs course-by-course wine pairings to highlight minerality and texture.</p>
+              <div class="muted" style="margin-top:8px">Specialties: Old World Burgundy, Natural wines</div>
+            </div>
+          </div>
+
+          <div class="chef">
+            <div class="avatar">RK</div>
+            <div class="bio">
+              <h4>Rohan Kapoor — Head of Service</h4>
+              <p class="muted">Leads floor operations, service training, and guest experience — blending warm hospitality with precision service.</p>
+            </div>
+          </div>
+
+          <div class="chef">
+            <div class="avatar">LM</div>
+            <div class="bio">
+              <h4>Ling Mei — Beverage Director</h4>
+              <p class="muted">Craft cocktails and non-alcoholic pairings, focusing on seasonal botanicals and house-made infusions.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section id="menu">
+        <h2>Menu</h2>
+        <p class="muted">A curated selection. Ask about our vegetarian and tasting menus when booking.</p>
+
+        <div class="menu" style="margin-top:14px">
+          <div class="menu-section">
+            <h3>Starters</h3>
+            <div class="dish"><div>
+              <div style="font-weight:700">Charred Octopus</div>
+              <div class="muted">smoked paprika • potato purée • preserved lemon</div>
+            </div><div class="price">₹1,450</div></div>
+
+            <div class="dish"><div>
+              <div style="font-weight:700">Seasonal Harvest Salad</div>
+              <div class="muted">heirloom vegetables • citrus vinaigrette</div>
+            </div><div class="price">₹950</div></div>
+
+            <div class="dish"><div>
+              <div style="font-weight:700">Tuna Tartare</div>
+              <div class="muted">yuzu • sesame • crispy quinoa</div>
+            </div><div class="price">₹1,250</div></div>
+          </div>
+
+          <div class="menu-section">
+            <h3>Mains</h3>
+            <div class="dish"><div>
+              <div style="font-weight:700">Heritage Grain Risotto</div>
+              <div class="muted">truffle butter • aged parmesan</div>
+            </div><div class="price">₹1,650</div></div>
+
+            <div class="dish"><div>
+              <div style="font-weight:700">Slow-Cooked Lamb Shoulder</div>
+              <div class="muted">root vegetables • rosemary jus</div>
+            </div><div class="price">₹2,250</div></div>
+
+            <div class="dish"><div>
+              <div style="font-weight:700">Seared Sea Bass</div>
+              <div class="muted">saffron emulsion • citrus pearls</div>
+            </div><div class="price">₹1,980</div></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:14px">
+          <div class="menu-section" style="flex:1">
+            <h3>Chef's Tasting — 7 Courses</h3>
+            <p class="muted">A seasonal exploration (pre-booking recommended). Vegetarian option available.</p>
+          </div>
+
+          <div class="menu-section" style="width:320px">
+            <h3>Desserts & Cheese</h3>
+            <div class="dish"><div>
+              <div style="font-weight:700">Deconstructed Lemon Tart</div>
+              <div class="muted">basil sorbet • meringue shards</div>
+            </div><div class="price">₹760</div></div>
+
+            <div class="dish"><div>
+              <div style="font-weight:700">Artisan Cheese Plate</div>
+              <div class="muted">selection of three cheeses • house chutney</div>
+            </div><div class="price">₹1,150</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="private-dining">
+        <h2>Private Dining</h2>
+        <p class="muted">From intimate celebrations to high-level tastings, we tailor the menu, music and service. Inquire for bespoke menus and AV support.</p>
+        <div style="margin-top:12px" class="cards">
+          <div class="card"><h3>The Observatory</h3><p class="muted">Intimate glass-ceiling private room for 8–16 guests. Ideal for tasting events and special dinners.</p></div>
+          <div class="card"><h3>The Hearth</h3><p class="muted">Cozy wood-paneled room for up to 8 guests. Ideal for family celebrations.</p></div>
+          <div class="card"><h3>Off-site Catering</h3><p class="muted">Full-service off-site culinary team for events and product launches.</p></div>
+        </div>
+      </section>
+
+      <section id="reservations">
+        <h2>Reservations</h2>
+        <p class="muted">We accept reservations online and by phone. For tasting menus and private dining, please reserve at least 72 hours in advance.</p>
+
+        <div class="contact-grid" style="margin-top:12px">
+          <div class="contact-card">
+            <form id="reservation-form" onsubmit="submitReservation(event)">
+              <label for="name">Full Name</label>
+              <input id="name" required placeholder="Your name" />
+
+              <label for="email" style="margin-top:10px">Email</label>
+              <input id="email" type="email" required placeholder="you@example.com" />
+
+              <label for="date" style="margin-top:10px">Date & Time</label>
+              <input id="date" type="datetime-local" required />
+
+              <label for="guests" style="margin-top:10px">Guests</label>
+              <select id="guests">
+                <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+              </select>
+
+              <label for="notes" style="margin-top:10px">Special Requests</label>
+              <textarea id="notes" rows="3" placeholder="Dietary requirements, celebrations, accessibility needs..."></textarea>
+
+              <div style="margin-top:12px;display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary">Request Reservation</button>
+                <button type="button" class="btn btn-secondary" onclick="contactPhone()">Call Us</button>
+              </div>
+            </form>
+          </div>
+
+          <aside class="contact-card">
+            <h3>Contact & Location</h3>
+            <p class="muted">88 Aurora Lane, City Center<br/>Phone: +91 98765 43210<br/>Email: hello@aurora.restaurant</p>
+            <div style="height:12px"></div>
+            <h4>Hours</h4>
+            <p class="muted">Tue–Sun: 12:00 — 23:00 (kitchen closes 22:00). Closed on Mondays.</p>
+
+            <div style="height:12px"></div>
+            <h4>Events & Partnerships</h4>
+            <p class="muted">We collaborate with local farmers, distillers and artists for seasonal programs. Contact our events manager at events@aurora.restaurant</p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="contact" style="margin-top:18px">
+        <h2>Get in Touch</h2>
+        <p class="muted">For press, job inquiries and partnerships please use the form below.</p>
+        <div style="margin-top:12px" class="contact-card">
+          <form onsubmit="submitContact(event)">
+            <label>Name</label>
+            <input id="c-name" required />
+            <label style="margin-top:10px">Email</label>
+            <input id="c-email" type="email" required />
+            <label style="margin-top:10px">Message</label>
+            <textarea id="c-message" rows="4" required></textarea>
+            <div style="margin-top:10px;display:flex;gap:8px">
+              <button class="btn btn-primary" type="submit">Send Message</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <footer>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
+          <div>Aurora • © <span id="year"></span> • Crafted with care</div>
+          <div class="muted">Privacy • Terms • Careers</div>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Smooth scroll to section
+    function scrollToSection(id){
+      const el = document.getElementById(id);
+      if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    // Wire up side nav
+    document.querySelectorAll('.nav-item').forEach(item=>{
+      item.addEventListener('click',()=>{
+        const t = item.getAttribute('data-target');
+        scrollToSection(t);
+      })
+    })
+
+    // Simple gallery auto-rotation
+    const slides = [
+      {id:'slide-1',img:'https://images.unsplash.com/photo-1541544180161-4f9f3b3e3f6f?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder'},
+    ];
+    let si=0;
+    setInterval(()=>{
+      si = (si+1)%slides.length;
+      const s = document.getElementById(slides[si].id);
+      if(s) s.style.backgroundImage = `url('${slides[si].img}')`;
+    },5000);
+
+    // Reservation & contact handlers (demo only)
+    function submitReservation(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      alert('Thank you, '+name+"! We've received your reservation request. Our team will contact you shortly.");
+      e.target.reset();
+    }
+    function submitContact(e){
+      e.preventDefault();
+      const n = document.getElementById('c-name').value;
+      alert('Message received — thank you '+n+'!');
+      e.target.reset();
+    }
+    function contactPhone(){
+      window.location.href = 'tel:+919876543210';
+    }
+
+    // Small progressive enhancement: show which section is visible
+    const sections = document.querySelectorAll('main section');
+    const navItems = document.querySelectorAll('.nav-item');
+    const obs = new IntersectionObserver(entries=>{
+      entries.forEach(ent=>{
+        const id = ent.target.id;
+        const nav = document.querySelector(`.nav-item[data-target='${id}']`);
+        if(nav) nav.style.opacity = ent.isIntersecting? '1' : '0.6';
+      })
+    },{threshold:0.35});
+    sections.forEach(s=>obs.observe(s));
+
+  </script>
+    <!-- Lottie Script -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <!-- Option 2: Realistic Waiter Animation -->
+    <div style="text-align:center; margin:40px 0;">
+        <h2>Premium Service</h2>
+        <lottie-player
+            src="https://assets4.lottiefiles.com/packages/lf20_9cyyl8i4.json"
+            background="transparent"
+            speed="1"
+            style="width:300px;height:300px;"
+            loop autoplay>
+        </lottie-player>
+    </div>
+
+    <!-- Option 4: Floating Man Icon Animation -->
+    <div style="position:fixed; bottom:20px; right:20px; z-index:999; cursor:pointer;">
+        <lottie-player
+            src="https://assets1.lottiefiles.com/packages/lf20_tutvdkg0.json"
+            background="transparent"
+            speed="1"
+            style="width:120px;height:120px;"
+            loop autoplay>
+        </lottie-player>
+    </div>
+
+    <!-- Waiter Serving Plate Animation with Menu Text -->
+    <div id="animated-menu" style="text-align:center; margin:60px 0;">
+        <h2>Today's Special Menu</h2>
+        <div style="position:relative; display:inline-block;">
+            <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+            <lottie-player
+                src="https://assets9.lottiefiles.com/packages/lf20_dy3qg5.json"
+                background="transparent"
+                speed="1"
+                style="width:350px;height:350px;"
+                loop autoplay>
+            </lottie-player>
+            
+            <!-- Text inside plate -->
+            <div style="position:absolute; top:58%; left:50%; transform:translate(-50%, -50%); font-size:20px; font-weight:700; color:#222; background:rgba(255,255,255,0.9); padding:10px 20px; border-radius:10px;">
+                Butter Chicken<br>Truffle Pasta<br>RASS MALI </Main> 
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
